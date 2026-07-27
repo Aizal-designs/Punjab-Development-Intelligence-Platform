@@ -1,7 +1,227 @@
 import streamlit as st
 import pandas as pd
+import io
 
 from utils.data_loader import load_data
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)
+
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.enums import TA_CENTER
+
+
+def create_pdf(district_name, data):
+
+    buffer = io.BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = styles["Title"]
+    title_style.alignment = TA_CENTER
+
+
+    heading_style = styles["Heading2"]
+
+
+    normal_style = styles["BodyText"]
+
+
+    story = []
+
+
+    story.append(
+        Paragraph(
+            "Punjab Development Intelligence Platform (PDIP)",
+            title_style
+        )
+    )
+
+    story.append(
+        Spacer(1,20)
+    )
+
+
+    story.append(
+        Paragraph(
+            f"{district_name} District Development Report",
+            heading_style
+        )
+    )
+
+    story.append(
+        Spacer(1,15)
+    )
+
+
+    summary = (
+        "This report presents district level development indicators "
+        "including population, education, healthcare, infrastructure "
+        "and overall development performance."
+    )
+
+
+    story.append(
+        Paragraph(
+            summary,
+            normal_style
+        )
+    )
+
+
+    story.append(
+        Spacer(1,20)
+    )
+
+
+    table_data = [
+
+        ["Indicator","Value"],
+
+        [
+            "Population",
+            f"{int(data['Population']):,}"
+        ],
+
+        [
+            "Literacy Rate",
+            f"{data['LiteracyRate']:.2f}%"
+        ],
+
+        [
+            "Hospitals",
+            str(int(data["Hospitals"]))
+        ],
+
+        [
+            "Total Schools",
+            str(int(data["TotalSchools"]))
+        ],
+
+        [
+            "Education Index",
+            f"{data['EducationIndex']:.2f}"
+        ],
+
+        [
+            "Health Index",
+            f"{data['HealthIndex']:.2f}"
+        ],
+
+        [
+            "Infrastructure Index",
+            f"{data['InfrastructureIndex']:.2f}"
+        ],
+
+        [
+            "Development Score",
+            f"{data['DevelopmentScore']:.2f}"
+        ],
+
+        [
+            "District Rank",
+            str(int(data["Rank"]))
+        ]
+
+    ]
+
+
+    table = Table(
+        table_data,
+        colWidths=[200,150]
+    )
+
+
+    table.setStyle(
+
+        TableStyle([
+
+            ("GRID",(0,0),(-1,-1),0.5,None),
+
+            ("BACKGROUND",
+             (0,0),
+             (-1,0),
+             None),
+
+            ("ALIGN",
+             (0,0),
+             (-1,-1),
+             "CENTER"),
+
+            ("VALIGN",
+             (0,0),
+             (-1,-1),
+             "MIDDLE")
+
+        ])
+
+    )
+
+
+    story.append(table)
+
+
+    story.append(
+        Spacer(1,25)
+    )
+
+
+    story.append(
+        Paragraph(
+            "Development Recommendation",
+            heading_style
+        )
+    )
+
+
+    if data["DevelopmentScore"] >= 70:
+
+        recommendation = (
+            "District performance is strong. "
+            "Focus on sustainable growth and maintaining quality services."
+        )
+
+    elif data["DevelopmentScore"] >= 40:
+
+        recommendation = (
+            "District shows moderate development. "
+            "Further improvement is required in key sectors."
+        )
+
+    else:
+
+        recommendation = (
+            "District requires priority investment in education, "
+            "healthcare and infrastructure."
+        )
+
+
+    story.append(
+        Paragraph(
+            recommendation,
+            normal_style
+        )
+    )
+
+
+    doc.build(story)
+
+
+    buffer.seek(0)
+
+    return buffer
+
 
 
 def show_reports():
@@ -9,26 +229,12 @@ def show_reports():
     df = load_data()
 
 
-    st.markdown(
-        """
-        <div class="hero">
+    st.title("📄 Development Reports")
 
-        <h1>
-        📄 Development Reports
-        </h1>
 
-        <p style="color:#64748B;font-size:17px;">
-        Generate professional district development reports
-        using Punjab development indicators.
-        </p>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    st.write(
+        "Generate professional district development reports."
     )
-
-
-    st.write("")
 
 
     districts = sorted(
@@ -51,80 +257,11 @@ def show_reports():
 
 
     st.subheader(
-        f"📍 {selected} Development Profile"
+        f"{selected} Development Profile"
     )
 
 
-    col1,col2,col3,col4 = st.columns(4)
-
-
-    with col1:
-
-        st.metric(
-            "Population",
-            f"{int(data['Population']):,}"
-        )
-
-
-    with col2:
-
-        st.metric(
-            "Development Score",
-            f"{data['DevelopmentScore']:.2f}"
-        )
-
-
-    with col3:
-
-        st.metric(
-            "District Rank",
-            int(data["Rank"])
-        )
-
-
-    with col4:
-
-        st.metric(
-            "Literacy Rate",
-            f"{data['LiteracyRate']:.2f}%"
-        )
-
-
-    st.divider()
-
-
-    st.subheader(
-        "📊 Executive Summary"
-    )
-
-
-    if data["DevelopmentScore"] >= df["DevelopmentScore"].mean():
-
-        summary = (
-            f"{selected} shows above average development performance "
-            "compared with other Punjab districts."
-        )
-
-    else:
-
-        summary = (
-            f"{selected} requires targeted development attention "
-            "in education, healthcare and infrastructure sectors."
-        )
-
-
-    st.info(summary)
-
-
-    st.divider()
-
-
-    st.subheader(
-        "📋 Key Development Indicators"
-    )
-
-
-    indicators = pd.DataFrame(
+    preview = pd.DataFrame(
 
         {
 
@@ -133,8 +270,7 @@ def show_reports():
                 "Population",
                 "Literacy Rate",
                 "Hospitals",
-                "Beds",
-                "Total Schools",
+                "Schools",
                 "Education Index",
                 "Health Index",
                 "Infrastructure Index",
@@ -143,13 +279,11 @@ def show_reports():
 
             ],
 
-
             "Value":[
 
                 f"{int(data['Population']):,}",
                 f"{data['LiteracyRate']:.2f}%",
                 int(data["Hospitals"]),
-                int(data["Beds"]),
                 int(data["TotalSchools"]),
                 f"{data['EducationIndex']:.2f}",
                 f"{data['HealthIndex']:.2f}",
@@ -165,210 +299,26 @@ def show_reports():
 
 
     st.dataframe(
-
-        indicators,
-
+        preview,
         hide_index=True,
-
         use_container_width=True
-
     )
 
 
-    st.divider()
-
-
-    st.subheader(
-        "🏥 Sector Performance"
+    pdf = create_pdf(
+        selected,
+        data
     )
-
-
-    col1,col2,col3 = st.columns(3)
-
-
-    with col1:
-
-        st.metric(
-            "Education",
-            f"{data['EducationIndex']:.2f}"
-        )
-
-
-    with col2:
-
-        st.metric(
-            "Healthcare",
-            f"{data['HealthIndex']:.2f}"
-        )
-
-
-    with col3:
-
-        st.metric(
-            "Infrastructure",
-            f"{data['InfrastructureIndex']:.2f}"
-        )
-
-
-    st.divider()
-
-
-    st.subheader(
-        "✅ Strength Analysis"
-    )
-
-
-    strengths = []
-
-
-    if data["EducationIndex"] >= df["EducationIndex"].mean():
-
-        strengths.append(
-            "Education performance is above Punjab average."
-        )
-
-
-    if data["HealthIndex"] >= df["HealthIndex"].mean():
-
-        strengths.append(
-            "Healthcare indicators show strong performance."
-        )
-
-
-    if data["InfrastructureIndex"] >= df["InfrastructureIndex"].mean():
-
-        strengths.append(
-            "Infrastructure development is comparatively strong."
-        )
-
-
-    if not strengths:
-
-        strengths.append(
-            "District requires balanced improvement across sectors."
-        )
-
-
-    for item in strengths:
-
-        st.write(
-            "✔ " + item
-        )
-
-
-    st.divider()
-
-
-    st.subheader(
-        "🎯 Recommended Development Priorities"
-    )
-
-
-    recommendations = []
-
-
-    if data["EducationIndex"] < df["EducationIndex"].mean():
-
-        recommendations.append(
-            "Increase education facilities and literacy programs."
-        )
-
-
-    if data["HealthIndex"] < df["HealthIndex"].mean():
-
-        recommendations.append(
-            "Improve healthcare facilities and medical infrastructure."
-        )
-
-
-    if data["InfrastructureIndex"] < df["InfrastructureIndex"].mean():
-
-        recommendations.append(
-            "Focus on infrastructure expansion and public services."
-        )
-
-
-    if not recommendations:
-
-        recommendations.append(
-            "Maintain current development progress and improve sustainability."
-        )
-
-
-    for item in recommendations:
-
-        st.write(
-            "• " + item
-        )
-
-
-    st.divider()
-
-
-    st.subheader(
-        "📥 Download Report"
-    )
-
-
-    report = f"""
-Punjab Development Intelligence Platform
-
-District Development Report
-
-District:
-{selected}
-
-
-Population:
-{int(data['Population']):,}
-
-
-Literacy Rate:
-{data['LiteracyRate']:.2f}%
-
-
-Hospitals:
-{int(data['Hospitals'])}
-
-
-Schools:
-{int(data['TotalSchools'])}
-
-
-Education Index:
-{data['EducationIndex']:.2f}
-
-
-Health Index:
-{data['HealthIndex']:.2f}
-
-
-Infrastructure Index:
-{data['InfrastructureIndex']:.2f}
-
-
-Development Score:
-{data['DevelopmentScore']:.2f}
-
-
-District Rank:
-{int(data['Rank'])}
-
-
-Development Recommendation:
-
-{chr(10).join(recommendations)}
-"""
 
 
     st.download_button(
 
-        "📄 Download Development Report",
+        label="📥 Download Professional PDF Report",
 
-        report,
+        data=pdf,
 
-        file_name=f"{selected}_Development_Report.txt",
+        file_name=f"{selected}_PDIP_Report.pdf",
 
-        mime="text/plain"
+        mime="application/pdf"
 
     )

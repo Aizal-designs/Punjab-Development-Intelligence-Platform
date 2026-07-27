@@ -67,9 +67,6 @@ def create_sidebar():
             "Data Driven Decision Support System"
         )
 
-        st.caption(
-            f"Version {APP_VERSION}"
-        )
-
+        
 
     return page

@@ -208,7 +208,6 @@ def show_about():
         """
         Punjab Development Intelligence Platform (PDIP)
 
-        Version: 2.0
 
         Built as a Data Science Portfolio Project.
 
