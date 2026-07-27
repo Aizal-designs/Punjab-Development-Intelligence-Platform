@@ -208,22 +208,15 @@ Generate professional PDF reports containing:
 ```text
 Punjab-Development-Intelligence-Platform/
 
-│
 ├── app.py
 ├── config.py
-│
 ├── assets/
-│
 ├── components/
 │   └── charts.py
-│
 ├── data/
 │   └── district_dataset.csv
-│
 ├── models/
-│
 ├── notebooks/
-│
 ├── pages/
 │   ├── home.py
 │   ├── district_explorer.py
@@ -239,13 +232,12 @@ Punjab-Development-Intelligence-Platform/
 │   ├── research_mode.py
 │   ├── reports.py
 │   └── about.py
-│
 ├── utils/
 │   └── data_loader.py
-│
 └── requirements.txt
 
-Installation
+
+# Installation
 
 Clone the repository:
 
@@ -259,75 +251,12 @@ Install dependencies:
 
 pip install -r requirements.txt
 
-Run Application
 
-Start the Streamlit dashboard:
+# Run Application
+
+Start Streamlit dashboard:
 
 streamlit run app.py
 
-The dashboard will open in your browser.
+The dashboard will open in your browser. 
 
-Dataset
-
-The project uses district-level development indicators including:
-
-Population
-Literacy Rate
-Schools
-Hospitals
-Beds
-Education Index
-Health Index
-Infrastructure Index
-Development Score
-District Rank
-Population Density
-Urban Percentage
-Data Science Workflow
-
-The project follows a complete Data Science workflow:
-
-Data Collection
-Data Cleaning
-Data Preparation
-Exploratory Data Analysis
-Data Visualization
-Insight Generation
-Report Generation
-Future Improvements
-
-Future versions may include:
-
-Machine Learning based development prediction
-Real-time government datasets
-Interactive Punjab map visualization
-Advanced AI recommendation system
-Automated policy analysis reports
-Project Purpose
-
-This project was developed as a Data Science portfolio project to demonstrate:
-
-Data analysis skills
-Dashboard development
-Data visualization techniques
-Research-oriented analytics
-Evidence-based decision support systems
-Author
-
-Aizal Studio
-
-Punjab Development Intelligence Platform (PDIP)
-
-Data Science Portfolio Project
-
-Version
-
-Current Version: 2.0
-
-
-Save karne ke baad terminal:
-
-```powershell
-git add README.md
-git commit -m "Improve README documentation and formatting"
-git push 
