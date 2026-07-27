@@ -2,7 +2,7 @@ import streamlit as st
 
 from config import *
 
-
+from utils.theme import load_css
 
 from components.sidebar import create_sidebar
 
@@ -34,6 +34,11 @@ st.set_page_config(
 )
 
 
+# ======================================
+# Load Theme
+# ======================================
+
+load_css()
 
 
 # ======================================
