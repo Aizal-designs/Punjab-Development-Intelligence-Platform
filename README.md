@@ -8,6 +8,28 @@ The platform uses Python, Data Analytics, and Data Visualization techniques to t
 
 ---
 
+## Live Demo
+
+Access the deployed dashboard:
+
+https://aizal-designs-punjab-development-intelligence-platfo-app-6jzpkw.streamlit.app/
+
+# Dashboard Preview
+
+## Home Dashboard
+
+![Home Dashboard](assets/screenshots/home.jpg)
+
+![Home Overview](assets/screenshots/home_overview.jpg)
+
+![Home Metrics](assets/screenshots/home_metrics.jpg)
+
+
+## District Explorer
+
+![District Explorer](assets/screenshots/district_explorer.jpg)
+
+
 # Project Overview
 
 Effective development planning requires accurate data analysis and evidence based decision making.
